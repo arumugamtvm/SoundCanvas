@@ -10,5 +10,19 @@ namespace API.Data
             
         }
         public DbSet<Genre> Genres { get; set; }
+        public DbSet<Artist> Artists { get; set; }
+
+        public DbSet<Album> Albums { get; set; }
+        public DbSet<ArtistAlbumBridge> ArtistAlbumBridge { get; set; }
+         
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<ArtistAlbumBridge>().HasKey(x => new {x.ArtistId,x.AlbumId});
+
+            modelBuilder.Entity<Artist>().HasMany(x=>x.Albums).WithOne(x=>x.Artist).HasForeignKey(x=>x.ArtistId).IsRequired().OnDelete(DeleteBehavior.Cascade);
+            modelBuilder.Entity<Album>().HasMany(x => x.Artists).WithOne(x => x.Album).HasForeignKey(x => x.AlbumId).IsRequired().OnDelete(DeleteBehavior.Restrict);
+        }
     }
 }
